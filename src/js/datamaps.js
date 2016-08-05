@@ -755,6 +755,21 @@
     if ( options.geographyConfig.dataUrl ) {
       d3.json( options.geographyConfig.dataUrl, function(error, results) {
         if ( error ) throw new Error(error);
+
+        // Map alternativ countryId to alpha3 code if specified in geographyConfig (countryId)
+        // CountryId can be a simple string (eg 'id') or dot-notation reference to object property (eg "properties.alpha2code")
+        if ( options.geographyConfig.countryId && results.objects[ self.options.scope ].geometries.length > 0) {
+          var countryId = options.geographyConfig.countryId.split('.');
+          var countries = results.objects[ self.options.scope ].geometries;
+          countries.forEach( function (c) {
+            var id = null;
+            for (var i=0; i<countryId.length; i++){
+              id = id ? id[countryId[i]] : c[countryId[i]];
+            }
+            c.id = self.iso3166(id) || c.id;
+          });
+        }
+
         self.customTopo = results;
         draw( results );
       });
