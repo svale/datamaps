@@ -552,36 +552,8 @@
       .enter()
         .append('svg:circle')
         .attr('class', 'datamaps-bubble')
-        .attr('cx', function ( datum ) {
-          var latLng;
-          if ( datumHasCoords(datum) ) {
-            latLng = self.latLngToXY(datum.latitude, datum.longitude);
-          }
-          else if ( datum.centered ) {
-            var centered = self.iso3166(datum.centered);
-            if ( centered === 'USA' ) {
-              latLng = self.projection([-98.58333, 39.83333]);
-            } else {
-              latLng = self.path.centroid(svg.select('path.' + centered).data()[0]);
-            }
-          }
-          if ( latLng ) return latLng[0];
-        })
-        .attr('cy', function ( datum ) {
-          var latLng;
-          if ( datumHasCoords(datum) ) {
-            latLng = self.latLngToXY(datum.latitude, datum.longitude);
-          }
-          else if ( datum.centered ) {
-            var centered = self.iso3166(datum.centered);
-            if ( centered === 'USA' ) {
-              latLng = self.projection([-98.58333, 39.83333]);
-            } else {
-              latLng = self.path.centroid(svg.select('path.' + centered).data()[0]);
-            }
-          }
-          if ( latLng ) return latLng[1];
-        })
+        .attr('cx', function ( datum ) {return self.getXY(datum)[0];})
+        .attr('cy', function ( datum ) { return self.getXY(datum)[1];})
         .attr('r', function(datum) {
           // If animation enabled start with radius 0, otherwise use full size.
           return options.animate ? 0 : val(datum.radius, options.radius, datum);
@@ -667,10 +639,6 @@
         .delay(options.exitDelay)
         .attr("r", 0)
         .remove();
-
-    function datumHasCoords (datum) {
-      return typeof datum !== 'undefined' && typeof datum.latitude !== 'undefined' && typeof datum.longitude !== 'undefined';
-    }
   }
 
   function defaults(obj) {
@@ -1358,6 +1326,54 @@
   // Convert lat/lng coords to X / Y coords
   Datamap.prototype.latLngToXY = function(lat, lng) {
      return this.projection([lng, lat]);
+  };
+
+
+  /**
+   * [getXY description]
+   * @param  {[type]} d [description]
+   * @return {[type]}       [description]
+   */
+  Datamap.prototype.getXY = function(datum) {
+
+    var latLng = [0,0];
+
+    if ( typeof datum !== 'undefined' && typeof datum.latitude !== 'undefined' && typeof datum.longitude !== 'undefined' ) {
+      latLng = this.latLngToXY(datum.latitude, datum.longitude);
+    }
+    else if ( typeof datum !== 'undefined' && typeof datum.centered !== 'undefined') {
+      var centered = this.iso3166(datum.centered);
+      switch (centered) {
+        case  "USA":
+          latLng = this.latLngToXY(-98.58333, 39.83333);
+          break;
+        case "CAN":
+          latLng = this.latLngToXY(56.624472, -114.665293);
+          break;
+        case "JPN":
+          latLng = this.latLngToXY(35.689487, 139.691706);
+          break;
+        case "CHL":
+          latLng = this.latLngToXY(-33.448890, -70.669265);
+          break;
+        case "IDN":
+          latLng = this.latLngToXY(-6.208763, 106.845599);
+          break;
+        case "MYS":
+          latLng = this.latLngToXY(14.599512, 120.984219);
+          break;
+        case "NOR":
+          latLng = this.latLngToXY(60.054542, 7.542494);
+          break;
+        default:
+          latLng = this.path.centroid(this.svg.select('path.' + centered).data()[0]);
+      }
+    } else {
+      console.log('Oops, can\'t set an XY position...');
+    }
+
+    return latLng;
+
   };
 
   // Add <g> layer to root SVG
