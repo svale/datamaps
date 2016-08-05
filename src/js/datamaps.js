@@ -678,7 +678,7 @@
       if (source) {
         for (var prop in source) {
           // Deep copy if property not set
-          if (obj[prop] === null) {
+          if (obj[prop] == null) {
             if (typeof source[prop] == 'function') {
               obj[prop] = source[prop];
             }
