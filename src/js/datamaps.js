@@ -19,6 +19,7 @@
     filters: {},
     geographyConfig: {
         dataUrl: null,
+        CountryId: null,
         hideAntarctica: true,
         hideHawaiiAndAlaska : false,
         borderWidth: 1,
