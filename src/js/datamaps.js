@@ -161,7 +161,7 @@
       svg.append("use")
           .attr("class", "fill")
           .attr("xlink:href", "#sphere");
-      projection.scale(250).clipAngle(90).rotate(options.projectionConfig.rotation)
+      projection.scale(250).clipAngle(90).rotate(options.projectionConfig.rotation);
     }
 
     path = d3.geo.path()
@@ -378,7 +378,7 @@
             if (typeof datum.origin === "string") {
                switch (datum.origin) {
                     case  "USA":
-                        originXY = self.latLngToXY(41.140276, -100.760145)
+                        originXY = self.latLngToXY(41.140276, -100.760145);
                         break;
                     case "CAN":
                         originXY = self.latLngToXY(56.624472, -114.665293);
@@ -402,7 +402,7 @@
                         originXY = self.path.centroid(svg.select('path.' + datum.origin).data()[0]);
                 }
             } else {
-              originXY = self.latLngToXY(val(datum.origin.latitude, datum), val(datum.origin.longitude, datum))
+              originXY = self.latLngToXY(val(datum.origin.latitude, datum), val(datum.origin.longitude, datum));
             }
 
             if (typeof datum.destination === 'string') {
@@ -441,7 +441,7 @@
                   .source(function(d) { return [val(d.origin.longitude, d), val(d.origin.latitude, d)]; })
                   .target(function(d) { return [val(d.destination.longitude, d), val(d.destination.latitude, d)]; });
 
-              return path(greatArc(datum))
+              return path(greatArc(datum));
             }
             var sharpness = val(datum.arcSharpness, options.arcSharpness, datum);
             return "M" + originXY[0] + ',' + originXY[1] + "S" + (midXY[0] + (50 * sharpness)) + "," + (midXY[1] - (75 * sharpness)) + "," + destXY[0] + "," + destXY[1];
@@ -476,7 +476,7 @@
             this.style.transition = this.style.WebkitTransition = 'stroke-dashoffset ' + val(datum.animationSpeed, options.animationSpeed, datum) + 'ms ease-out';
             this.style.strokeDashoffset = '0';
             return 'none';
-          })
+          });
 
     arcs.exit()
       .transition()
@@ -514,7 +514,7 @@
             .attr("x2", center[0])
             .attr("y2", center[1])
             .style("stroke", options.labelColor || "#000")
-            .style("stroke-width", options.lineWidth || 1)
+            .style("stroke-width", options.lineWidth || 1);
         }
 
           layer.append("text")
@@ -525,9 +525,9 @@
               .style("fill", options.labelColor || "#000")
               .text(function() {
                   if (options.customLabelText && options.customLabelText[d.id]) {
-                      return options.customLabelText[d.id]
+                      return options.customLabelText[d.id];
                   } else {
-                      return d.id
+                      return d.id;
                   }
               });
 
@@ -560,7 +560,7 @@
           else if ( datum.centered ) {
             var centered = self.iso3166(datum.centered);
             if ( centered === 'USA' ) {
-              latLng = self.projection([-98.58333, 39.83333])
+              latLng = self.projection([-98.58333, 39.83333]);
             } else {
               latLng = self.path.centroid(svg.select('path.' + centered).data()[0]);
             }
@@ -575,7 +575,7 @@
           else if ( datum.centered ) {
             var centered = self.iso3166(datum.centered);
             if ( centered === 'USA' ) {
-              latLng = self.projection([-98.58333, 39.83333])
+              latLng = self.projection([-98.58333, 39.83333]);
             } else {
               latLng = self.path.centroid(svg.select('path.' + centered).data()[0]);
             }
@@ -649,7 +649,7 @@
           }
 
           d3.selectAll('.datamaps-hoverover').style('display', 'none');
-        })
+        });
 
     bubbles.transition()
       .duration(400)
@@ -678,7 +678,7 @@
       if (source) {
         for (var prop in source) {
           // Deep copy if property not set
-          if (obj[prop] == null) {
+          if (obj[prop] === null) {
             if (typeof source[prop] == 'function') {
               obj[prop] = source[prop];
             }
@@ -739,7 +739,7 @@
 
       d3.select(options.element).select('svg').selectAll('g').attr('transform', 'scale(' + (newsize / oldsize) + ')');
     }
-  }
+  };
 
   // Actually draw the features(states & countries)
   Datamap.prototype.draw = function() {
@@ -1364,10 +1364,10 @@
   Datamap.prototype.addLayer = function( className, id, first ) {
     var layer;
     if ( first ) {
-      layer = this.svg.insert('g', ':first-child')
+      layer = this.svg.insert('g', ':first-child');
     }
     else {
-      layer = this.svg.append('g')
+      layer = this.svg.append('g');
     }
     return layer.attr('id', id || '')
       .attr('class', className || '');
@@ -1381,15 +1381,15 @@
     if ( options && options.reset === true ) {
       svg.selectAll('.datamaps-subunit')
         .attr('data-info', function() {
-           return "{}"
+           return "{}";
         })
-        .transition().style('fill', this.options.fills.defaultFill)
+        .transition().style('fill', this.options.fills.defaultFill);
     }
 
     for ( var subunit in data ) {
       if ( data.hasOwnProperty(subunit) ) {
         var color;
-        var subunitData = data[subunit]
+        var subunitData = data[subunit];
         if ( ! subunit ) {
           continue;
         }
