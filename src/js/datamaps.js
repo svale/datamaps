@@ -558,10 +558,11 @@
             latLng = self.latLngToXY(datum.latitude, datum.longitude);
           }
           else if ( datum.centered ) {
-            if ( datum.centered === 'USA' ) {
+            var centered = self.iso3166(datum.centered);
+            if ( centered === 'USA' ) {
               latLng = self.projection([-98.58333, 39.83333])
             } else {
-              latLng = self.path.centroid(svg.select('path.' + datum.centered).data()[0]);
+              latLng = self.path.centroid(svg.select('path.' + centered).data()[0]);
             }
           }
           if ( latLng ) return latLng[0];
@@ -572,10 +573,11 @@
             latLng = self.latLngToXY(datum.latitude, datum.longitude);
           }
           else if ( datum.centered ) {
-            if ( datum.centered === 'USA' ) {
+            var centered = self.iso3166(datum.centered);
+            if ( centered === 'USA' ) {
               latLng = self.projection([-98.58333, 39.83333])
             } else {
-              latLng = self.path.centroid(svg.select('path.' + datum.centered).data()[0]);
+              latLng = self.path.centroid(svg.select('path.' + centered).data()[0]);
             }
           }
           if ( latLng ) return latLng[1];
