@@ -546,84 +546,91 @@
       throw "Datamaps Error - bubbles must be an array";
     }
 
-    var bubbles = layer.selectAll('circle.datamaps-bubble').data( data, options.key );
-
-    bubbles
-      .enter()
-        .append('svg:circle')
-        .attr('class', 'datamaps-bubble')
-        .attr('cx', function ( datum ) {return self.getXY(datum)[0];})
-        .attr('cy', function ( datum ) { return self.getXY(datum)[1];})
-        .attr('r', function(datum) {
-          // If animation enabled start with radius 0, otherwise use full size.
-          return options.animate ? 0 : val(datum.radius, options.radius, datum);
-        })
-        .attr('data-info', function(datum) {
-          return JSON.stringify(datum);
-        })
-        .attr('filter', function (datum) {
-          var filterKey = filterData[ val(datum.filterKey, options.filterKey, datum) ];
-
-          if (filterKey) {
-            return filterKey;
-          }
-        })
-        .style('stroke', function ( datum ) {
-          return val(datum.borderColor, options.borderColor, datum);
-        })
-        .style('stroke-width', function ( datum ) {
-          return val(datum.borderWidth, options.borderWidth, datum);
-        })
-        .style('stroke-opacity', function ( datum ) {
-          return val(datum.borderOpacity, options.borderOpacity, datum);
-        })
-        .style('fill-opacity', function ( datum ) {
-          return val(datum.fillOpacity, options.fillOpacity, datum);
-        })
-        .style('fill', function ( datum ) {
-          var fillColor = fillData[ val(datum.fillKey, options.fillKey, datum) ];
-          return fillColor || fillData.defaultFill;
-        })
-        .on('mouseover', function ( datum ) {
-          var $this = d3.select(this);
-
-          if (options.highlightOnHover) {
-            // Save all previous attributes for mouseout
-            var previousAttributes = {
-              'fill':  $this.style('fill'),
-              'stroke': $this.style('stroke'),
-              'stroke-width': $this.style('stroke-width'),
-              'fill-opacity': $this.style('fill-opacity')
-            };
-
-            $this
-              .style('fill', val(datum.highlightFillColor, options.highlightFillColor, datum))
-              .style('stroke', val(datum.highlightBorderColor, options.highlightBorderColor, datum))
-              .style('stroke-width', val(datum.highlightBorderWidth, options.highlightBorderWidth, datum))
-              .style('stroke-opacity', val(datum.highlightBorderOpacity, options.highlightBorderOpacity, datum))
-              .style('fill-opacity', val(datum.highlightFillOpacity, options.highlightFillOpacity, datum))
-              .attr('data-previousAttributes', JSON.stringify(previousAttributes));
-          }
-
-          if (options.popupOnHover) {
-            self.updatePopup($this, datum, options, svg);
-          }
-        })
-        .on('mouseout', function ( datum ) {
-          var $this = d3.select(this);
-
-          if (options.highlightOnHover) {
-            // Reapply previous attributes
-            var previousAttributes = JSON.parse( $this.attr('data-previousAttributes') );
-            for ( var attr in previousAttributes ) {
-              $this.style(attr, previousAttributes[attr]);
+    // wrap all bubble circles in a g element (so we can add labels etc later on)
+    var bubbles = layer.selectAll('g.datamaps-bubble').data( data, options.key );
+    bubbles.enter()
+        .append('svg:g')
+          .attr('class', 'datamaps-bubble')
+          .attr('data-info', function(datum) {
+            return JSON.stringify(datum);
+          })
+          .attr('filter', function (datum) {
+            var filterKey = filterData[ val(datum.filterKey, options.filterKey, datum) ];
+            if (filterKey) {
+              return filterKey;
             }
-          }
+          })
+          .on('mouseover', function ( datum ) {
+            var $this = d3.select(this).select('circle');
+            if (options.highlightOnHover) {
+              // Save all previous attributes for mouseout
+              var previousAttributes = {
+                'fill':  $this.style('fill'),
+                'stroke': $this.style('stroke'),
+                'stroke-width': $this.style('stroke-width'),
+                'fill-opacity': $this.style('fill-opacity')
+              };
 
-          d3.selectAll('.datamaps-hoverover').style('display', 'none');
-        });
+              $this
+                .style('fill', val(datum.highlightFillColor, options.highlightFillColor, datum))
+                .style('stroke', val(datum.highlightBorderColor, options.highlightBorderColor, datum))
+                .style('stroke-width', val(datum.highlightBorderWidth, options.highlightBorderWidth, datum))
+                .style('stroke-opacity', val(datum.highlightBorderOpacity, options.highlightBorderOpacity, datum))
+                .style('fill-opacity', val(datum.highlightFillOpacity, options.highlightFillOpacity, datum))
+                .attr('data-previousAttributes', JSON.stringify(previousAttributes));
+            }
 
-    bubbles.transition()
+            if (options.popupOnHover) {
+              self.updatePopup($this, datum, options, svg);
+            }
+          })
+          .on('mouseout', function ( datum ) {
+            var $this = d3.select(this).select('circle');
+
+            if (options.highlightOnHover) {
+              // Reapply previous attributes
+              var previousAttributes = JSON.parse( $this.attr('data-previousAttributes') );
+              for ( var attr in previousAttributes ) {
+                $this.style(attr, previousAttributes[attr]);
+              }
+            }
+
+            d3.selectAll('.datamaps-hoverover').style('display', 'none');
+          });
+
+    bubbles.exit()
+      .transition()
+        .delay(options.exitDelay)
+        .attr("r", 0)
+        .remove();
+
+    // paint the actual circles to the bubbles
+    var bubbleCircles = bubbles.append('svg:circle')
+      .attr('class', 'bubble-circle')
+      .attr('cx', function ( datum ) {return self.getXY(datum)[0];})
+      .attr('cy', function ( datum ) { return self.getXY(datum)[1];})
+      .attr('r', function(datum) {
+        // If animation enabled start with radius 0, otherwise use full size.
+        return options.animate ? 0 : val(datum.radius, options.radius, datum);
+      })
+      .style('stroke', function ( datum ) {
+        return val(datum.borderColor, options.borderColor, datum);
+      })
+      .style('stroke-width', function ( datum ) {
+        return val(datum.borderWidth, options.borderWidth, datum);
+      })
+      .style('stroke-opacity', function ( datum ) {
+        return val(datum.borderOpacity, options.borderOpacity, datum);
+      })
+      .style('fill-opacity', function ( datum ) {
+        return val(datum.fillOpacity, options.fillOpacity, datum);
+      })
+      .style('fill', function ( datum ) {
+        var fillColor = fillData[ val(datum.fillKey, options.fillKey, datum) ];
+        return fillColor || fillData.defaultFill;
+      });
+
+    bubbleCircles.transition()
       .duration(400)
       .attr('r', function ( datum ) {
         return val(datum.radius, options.radius, datum);
@@ -633,12 +640,6 @@
       .attr('data-info', function(d) {
         return JSON.stringify(d);
       });
-
-    bubbles.exit()
-      .transition()
-        .delay(options.exitDelay)
-        .attr("r", 0)
-        .remove();
   }
 
   function defaults(obj) {

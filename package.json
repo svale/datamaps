@@ -1,6 +1,6 @@
 {
   "name": "datamaps",
-  "main": "dist/datamaps.all.js",
+  "main": "src/js/datamaps.js",
   "description": "datamaps with d3.js",
   "version": "0.5.7",
   "author": "Mark DiMarco<markmarkoh@gmail.com>",
