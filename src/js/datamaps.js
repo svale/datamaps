@@ -231,7 +231,10 @@
       })
       .style('stroke-width', geoConfig.borderWidth)
       .style('stroke-opacity', geoConfig.borderOpacity)
-      .style('stroke', geoConfig.borderColor);
+      .style('stroke', geoConfig.borderColor)
+      .on("click", function(d){
+        console.log('clicked country: ' + d);
+      });
   }
 
   function handleGeographyConfig () {
