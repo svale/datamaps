@@ -116,8 +116,9 @@
       .style('overflow', 'hidden'); // IE10+ doesn't respect height/width when map is zoomed in
 
     if (this.options.responsive) {
-      d3.select(this.options.element).style({'position': 'relative', 'padding-bottom': (this.options.aspectRatio*100) + '%'});
-      d3.select(this.options.element).select('svg').style({'position': 'absolute', 'width': '100%', 'height': '100%'});
+      // d3.select(this.options.element).style({'position': 'relative', 'padding-bottom': (this.options.aspectRatio*100) + '%'});
+      // d3.select(this.options.element).style({'position': 'relative', 'width': '100%', 'height': '100vh' });
+      d3.select(this.options.element).select('svg').style({'position': 'absolute', 'width': '100%', 'height': '100vh'});
       d3.select(this.options.element).select('svg').select('g').selectAll('path').style('vector-effect', 'non-scaling-stroke');
 
     }
@@ -703,10 +704,13 @@
     var options = self.options;
 
     if (options.responsive) {
-      var newsize = options.element.clientWidth,
-          oldsize = d3.select( options.element).select('svg').attr('data-width');
+      d3.select(options.element).select('svg').selectAll('.datamaps-subunits').remove();
+      this.draw();
 
-      d3.select(options.element).select('svg').selectAll('g').attr('transform', 'scale(' + (newsize / oldsize) + ')');
+      // var newsize = options.element.clientWidth,
+      //     oldsize = d3.select( options.element).select('svg').attr('data-width');
+
+      // d3.select(options.element).select('svg').selectAll('g').attr('transform', 'scale(' + (newsize / oldsize) + ')');
     }
   };
 
